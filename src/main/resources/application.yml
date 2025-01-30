@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+  logging:
+    level:
+      org:
+        hibernate:
+          security: DEBUG
+
+api.secret.key: $2y$15$bznkvP1hVyDRGYtqMCpX6.p4VvSX6XUxYFEQEWbD6d1Y01/NGB0hO
+api.token.expiration.hours: 3600000

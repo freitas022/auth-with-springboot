@@ -1,3 +1,3 @@
 package br.com.freitas.lockapp.dto;
 
-public record RequestDto(String name, String email, String password) {}
+public record RequestDto(String username, String password) {}

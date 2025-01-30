@@ -7,27 +7,16 @@ import br.com.freitas.lockapp.exceptions.NotFoundException;
 import br.com.freitas.lockapp.model.User;
 import br.com.freitas.lockapp.model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-    }
 
     public UserDto findById(final Long id) {
         return userRepository.findById(id)
@@ -43,9 +32,9 @@ public class UserService implements UserDetailsService {
     }
 
     public void save(RequestDto request) {
-        existsByEmail(request.email());
+        existsByEmail(request.username());
         String password = new BCryptPasswordEncoder().encode(request.password());
-        var userToSave = new User(request.name(), request.email(), password, "CUSTOMER");
+        var userToSave = new User(null, request.username(), password, "CUSTOMER");
         userRepository.save(userToSave);
     }
 
@@ -59,16 +48,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void existsByEmail(String email) {
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByUsername(email)) {
             throw new BusinessException("Email already in use");
-        }
-    }
-
-    public void activateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.id())
-                .orElseThrow(NotFoundException::new);
-        if (!user.isEnabled()) {
-            //service de email para ativar o usuário
         }
     }
 }
